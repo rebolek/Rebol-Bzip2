@@ -1,4 +1,4 @@
-[![Rebol-Bzip2 CI](https://github.com/Oldes/Rebol-C-Extension-Bzip2/actions/workflows/main.yml/badge.svg)](https://github.com/Oldes/Rebol-C-Extension-Bzip2/actions/workflows/main.yml)
+[![Rebol-Bzip2 CI](https://github.com/Oldes/Rebol-Bzip2/actions/workflows/main.yml/badge.svg)](https://github.com/Oldes/Rebol-Bzip2/actions/workflows/main.yml)
 
 # Rebol/Bzip2
 
