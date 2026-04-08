@@ -3,17 +3,15 @@
 ;-  (/uOu\)  https://github.com/Siskin-framework/Builder/                       
 ;-===="="=======================================================================
 
-github: libarchive/bzip2 ;%v1.0.0 ;= optional branch name
+github: @bzip2
 
-version: 0.0.1
-
-;include:  %bzip2/
+version: 1.1.0
 
 compiler: clang
 arch:     x64
 optimize: 2
 
-define: USE_TRACES
+;define: USE_TRACES
 
 ;- options common for all Rebol extensions ----------------------
 #if Windows? [
@@ -59,8 +57,6 @@ r3-extension: [
 	flags:  shared
 
 	include: %bzip2
-	include: %"$SISKIN_INSTALL/include"
-	library: [%"$SISKIN_INSTALL/lib/" %bz2_static]
 
 	strip:  on
 
@@ -142,13 +138,13 @@ eggs: [
 			name: %bzip2-macos-x64
 			:target-x64
 			:r3-extension
-			libraries: [%_static_win_x64/ %bz2_static]
+			libraries: [%_static_mac_x64/ %bz2_static]
 		]
 		"Rebol Bzip2 extension: macos_arm64" [
 			name: %bzip2-macos-arm64
 			:target-arm64
 			:r3-extension
-			libraries: [%_static_win_arm64/ %bz2_static]
+			libraries: [%_static_mac_arm64/ %bz2_static]
 		]
 	]
 	#if Linux? [
