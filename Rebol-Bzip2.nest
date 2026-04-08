@@ -116,7 +116,7 @@ eggs: [
 			name: %bzip2-windows-x64
 			:target-x64
 			:r3-extension
-			libraries: [%_static_win_arm64/Release/ %bz2_static]
+			libraries: [%_static_win_x64/Release/ %bz2_static]
 		]
 		"Rebol Bzip2 extension: arm64" [
 			name: %bzip2-windows-arm64
