@@ -57,7 +57,7 @@ enum ma_type_words {W_TYPE_0
 typedef int (*MyCommandPointer)(RXIFRM *frm, void *ctx);
 
 #define BZIP2_EXT_INIT_CODE \
-	"REBOL [Title: \"Rebol Bzip2 Extension\" Name: Bzip2 Type: module Version: 1.1.0 Needs: 3.20.5 Author: Oldes Date: 14-Apr-2026/5:43:12 License: MIT Url: https://github.com/Oldes/Rebol-Bzip2]\n"\
+	"REBOL [Title: \"Rebol Bzip2 Extension\" Name: Bzip2 Type: module Version: 1.1.0 Needs: 3.20.5 Author: Oldes Date: 14-Apr-2026/7:02:37 License: MIT Url: https://github.com/Oldes/Rebol-Bzip2]\n"\
 	"init-words: command [args [block!] type [block!]]\n"\
 	"version: command [\"Libbzip2 version string (BZ2_bzlibVersion)\"]\n"\
 	"compress: command [\"Compress data using bzip2\" data [binary! any-string!] \"Input data to compress.\" /part \"Limit the input data to a given length.\" length [integer!] \"Length of input data.\" /level quality [integer!] \"Block size 100k: 1 (fast) to 9 (best).\"]\n"\
