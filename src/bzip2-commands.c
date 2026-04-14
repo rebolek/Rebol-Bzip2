@@ -389,6 +389,9 @@ COMMAND cmd_write(RXIFRM *frm, void *ctx) {
 	if (!data) {
 		if (!buffer)
 			return RXR_NONE;
+		/* NONE is only meaningful for encoders (finish); decoders ignore. */
+		if (hob->sym != Handle_Bzip2Encoder)
+			return RXR_NONE;
 		ref_finish = TRUE;
 	} else {
 		s->next_in = (char *)BIN_SKIP(data, index);
@@ -477,8 +480,11 @@ COMMAND cmd_write(RXIFRM *frm, void *ctx) {
 	if (ref_flush || ref_finish) {
 		REBLEN tail = SERIES_TAIL(buffer);
 		REBSER *output = RL_MAKE_BINARY(tail);
+		const REBYTE *err = (hob->sym == Handle_Bzip2Encoder)
+			? ERR_NO_COMPRESS
+			: ERR_NO_DECOMPRESS;
 		if (!output)
-			RETURN_ERROR(ERR_NO_COMPRESS);
+			RETURN_ERROR(err);
 		COPY_MEM(BIN_HEAD(output), BIN_HEAD(buffer), tail);
 		SERIES_TAIL(output) = tail;
 		SERIES_TAIL(buffer) = 0;
@@ -515,9 +521,9 @@ COMMAND cmd_read(RXIFRM *frm, void *ctx) {
 			s->avail_out = (unsigned int)(SERIES_REST(buffer) - tail);
 			ret = BZ2_bzCompress(s, BZ_FLUSH);
 			SERIES_TAIL(buffer) = (REBLEN)((REBYTE *)s->next_out - BIN_HEAD(buffer));
-			if (ret == BZ_FLUSH_OK || ret == BZ_RUN_OK)
+			if (ret == BZ_FLUSH_OK)
 				break;
-			if (ret < 0)
+			if (ret < 0 || ret == BZ_SEQUENCE_ERROR)
 				RETURN_ERROR(ERR_NO_COMPRESS);
 		}
 	}
@@ -525,8 +531,11 @@ COMMAND cmd_read(RXIFRM *frm, void *ctx) {
 	{
 		REBLEN tail = SERIES_TAIL(buffer);
 		REBSER *output = RL_MAKE_BINARY(tail);
+		const REBYTE *err = (hob->sym == Handle_Bzip2Encoder)
+			? ERR_NO_COMPRESS
+			: ERR_NO_DECOMPRESS;
 		if (!output)
-			RETURN_ERROR(ERR_NO_COMPRESS);
+			RETURN_ERROR(err);
 		COPY_MEM(BIN_HEAD(output), BIN_HEAD(buffer), tail);
 		SERIES_TAIL(output) = tail;
 		SERIES_TAIL(buffer) = 0;

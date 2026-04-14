@@ -16,6 +16,26 @@ bin: compress "some data" 'bzip2
 txt: to string! decompress bin 'bzip2
 ```
 
+## Streaming API
+
+Incremental compression uses libbzip2 `bz_stream` handles (`make-encoder`, `make-decoder`, `write`, `read`). Output is accumulated on the handle until you call `write` with `/flush` or `/finish` (encoder), which returns a **copy** of the pending compressed binary and clears the buffer—similar to [Rebol-Zstd](https://github.com/Oldes/Rebol-Zstd).
+
+```rebol
+bzip2: import 'bzip2
+enc: bzip2/make-encoder
+bzip2/write :enc "Hello "
+bzip2/write :enc "World"
+bin: bzip2/write/finish :enc "!"
+text: to string! decompress bin 'bzip2
+;== "Hello World!"
+
+dec: bzip2/make-decoder
+bzip2/write :dec bin
+plain: to string! bzip2/read :dec
+```
+
+For large inputs you can feed the decoder in multiple `write` calls (splitting the compressed binary at byte boundaries is fine once the stream is valid).
+
 ## Extension commands:
 
 

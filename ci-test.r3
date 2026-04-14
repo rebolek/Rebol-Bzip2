@@ -93,6 +93,62 @@ if not error? try [
 ]
 ensure "streaming encoder/decoder round-trip" st-ok
 
+;; Encoder: several writes then one finish (single bzip2 stream)
+mw-ok: false
+if not error? try [
+    e3: bzip2/make-encoder
+    bzip2/write :e3 "chunk-"
+    bzip2/write :e3 "stream-"
+    bout: bzip2/write/finish :e3 "test"
+    mw-ok: all [binary? bout  "chunk-stream-test" = to string! decompress bout 'bzip2]
+][
+    mw-ok: false
+]
+ensure "streaming encoder multi-write + finish" mw-ok
+
+;; Encoder: read after partial write, then write/finish; join compressed chunks
+rd-ok: false
+if not error? try [
+    e4: bzip2/make-encoder
+    bzip2/write :e4 "read-"
+    b1: bzip2/read :e4
+    b2: bzip2/write/finish :e4 "path"
+    bad2: error? try [bzip2/write :e4 "x"]
+    joined: join b1 b2
+    rd-ok: all [
+        binary? b1
+        binary? b2
+        bad2
+        "read-path" = to string! decompress joined 'bzip2
+    ]
+][
+    rd-ok: false
+]
+ensure "streaming encoder read + finish + join" rd-ok
+
+;; Decoder: split compressed input across two writes
+spl-ok: false
+if not error? try [
+    sb: compress "split-decode-test" 'bzip2
+    cut: 1 + mod length? sb 11
+    p1: copy/part sb cut
+    p2: skip sb cut
+    d3: bzip2/make-decoder
+    bzip2/write :d3 p1
+    bzip2/write :d3 p2
+    out3: bzip2/read :d3
+    spl-ok: ("split-decode-test" = to string! out3)
+][
+    spl-ok: false
+]
+ensure "streaming decoder split compressed input" spl-ok
+
+;; Encoder finished handle rejects further writes
+ensure "write after encoder finish errors" all [
+    not error? try [hx: bzip2/make-encoder  bzip2/write/finish :hx "done"]
+    error? try [bzip2/write :hx "nope"]
+]
+
 ;; --- summary ---------------------------------------------------------------
 either errors = 0 [
     print as-green "OK: all Rebol/Bzip2 tests passed"
