@@ -16,6 +16,23 @@ bin: compress "some data" 'bzip2
 txt: to string! decompress bin 'bzip2
 ```
 
+## Installation
+
+Build the extension using Siskin and copy the produced `.rebx` into your Rebol modules directory.
+
+```bash
+# Build (Linux x64 example)
+./siskin Rebol-Bzip2.nest static-lib-x64
+./siskin Rebol-Bzip2.nest bzip2-linux-x64
+mv ./build/bzip2-linux-x64.so ./bzip2.rebx
+
+# Install
+mkdir -p ~/.rebol/modules
+cp -f ./bzip2.rebx ~/.rebol/modules/bzip2.rebx
+```
+
+If you see `invalid ELF header`, you likely installed the wrong file (e.g. the static archive `libbzip2-*.a`) instead of the extension `.rebx`.
+
 ## Streaming API
 
 Incremental compression uses libbzip2 `bz_stream` handles (`make-encoder`, `make-decoder`, `write`, `read`). Output is accumulated on the handle until you call `write` with `/flush` or `/finish` (encoder), which returns a **copy** of the pending compressed binary and clears the buffer—similar to [Rebol-Zstd](https://github.com/Oldes/Rebol-Zstd).
